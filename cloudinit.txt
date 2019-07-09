@@ -3,6 +3,11 @@
 echo "tail -f /var/log/cloud-init-output.log" > /root/logs.sh
 chmod +x /root/logs.sh
 
+### firewalld k3s issue on centos7
+firewall-cmd --permanent --direct --add-rule ipv4 filter INPUT 1 -i cni0 -s 10.42.0.0/16 -j ACCEPT
+firewall-cmd --permanent --direct --add-rule ipv4 filter FORWARD 1 -s 10.42.0.0/15 -j ACCEPT
+firewall-cmd --reload
+
 curl -SLs https://get.docker.com | sudo sh
 ip  -f inet a show eth0| grep inet| awk '{ print $2}' | cut -d/ -f1 > IP.txt
 export IP=$(cat IP.txt)
